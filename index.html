@@ -22,8 +22,8 @@
   <meta property="og:image" content="">
   <meta property="og:image:alt" content="">
 
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.png">
 
   <link rel="manifest" href="site.webmanifest">
@@ -110,7 +110,7 @@
 
 <body>
   <div class="topbar">
-    <img id="title" src="/img/TheGlassFeed.svg">
+    <img id="title" src="img/TheGlassFeed.svg">
     <p>Toggle tracking visibility with the toggle eye to the right.</p>
     <button onclick="toggleVisibility()"><a id="info">Show data collection [ON]</a><img id="status" src="/img/visibilityon.svg" alt="Visibility"></button>
     <button id="audiosetting" onclick="toggleAudio()"><a id="audioinfo">Toggle audio [OFF]</a><img id="audiostat" src="/img/volumeoff.svg" alt="Visibility"></button>
@@ -142,7 +142,7 @@
   // 2. Toggling Logic
   function toggleVisibility() {
     visibility = !visibility;
-    document.getElementById("status").src = visibility ? "/img/visibilityon.svg" : "/img/visibilityoff.svg";
+    document.getElementById("status").src = visibility ? "img/visibilityon.svg" : "img/visibilityoff.svg";
     document.getElementById("data-monitor").style.visibility = visibility ? "visible" : "hidden";
     document.getElementById("info").innerHTML = `Show data collection [${visibility ? 'ON' : 'OFF'}]`;
   }
@@ -151,7 +151,7 @@
     audio = !audio;
 
     // Update the UI
-    document.getElementById("audiostat").src = audio ? "/img/volumeon.svg" : "/img/volumeoff.svg";
+    document.getElementById("audiostat").src = audio ? "img/volumeon.svg" : "img/volumeoff.svg";
     document.getElementById("audioinfo").innerHTML = `Toggle audio [${audio ? 'ON' : 'OFF'}]`;
 
     // Update all Pexels videos
