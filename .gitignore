@@ -1,0 +1,6 @@
+# i dont know what im doing
+.cache
+.txt
+.git
+node_modules
+dist
