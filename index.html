@@ -1,0 +1,284 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+  <meta property="og:image:alt" content="">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#fafafa">
+
+  <style>
+    body {
+      align-items: center;
+      align-content: center;
+      margin: 5px;
+      font-family: "Roboto", sans-serif;
+      background-color: #DEFFDA
+    }
+    .topbar {
+      align-items: center;
+      text-align: center;
+    }
+    #title{
+      height: 150px;
+      width: 100%;
+    }
+    p {
+      font-size: 20px;
+      font-weight: 600;
+      font-family: "Roboto Mono", sans-serif;
+    }
+    button {
+      position: fixed;
+      right: 5px;
+      top: 5px;
+
+      display: compact;
+
+      font-family: "Roboto Mono", sans-serif;
+      background-color: rgba(0, 0, 0, 0);
+      border: none;
+      filter: invert(0.5);
+
+      margin: 0;
+      padding: 0;
+    }
+    #audiosetting {
+      top: 50px;
+    }
+    button a{
+      visibility: hidden;
+    }
+    button:hover{
+      filter: invert(0.6);
+    }
+    button:hover a{
+      visibility: visible;
+    }
+    button:active {
+      filter: invert(0.3);
+    }
+    button img {
+      width: 50px;
+      height: 50px;
+    }
+
+    .area:hover {
+      background-color: #F5F5F5;
+    }
+
+    #feed {
+      background-color: #ffffff;
+    }
+
+    #data-monitor {
+      position: fixed;
+      right: 20px;
+      top: 100px;
+      width: 250px;
+      background: white;
+      border: 2px solid black;
+      padding: 10px;
+      font-family: "Roboto Mono", monospace;
+      font-size: 12px;
+      display: block; /* We will toggle this with your button */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <img id="title" src="/img/TheGlassFeed.svg">
+    <p>Toggle tracking visibility with the toggle eye to the right.</p>
+    <button onclick="toggleVisibility()"><a id="info">Show data collection [ON]</a><img id="status" src="/img/visibilityon.svg" alt="Visibility"></button>
+    <button id="audiosetting" onclick="toggleAudio()"><a id="audioinfo">Toggle audio [OFF]</a><img id="audiostat" src="/img/volumeoff.svg" alt="Visibility"></button>
+
+  </div>
+  <div id="data-monitor">
+    <strong>LIVE ALGORITHM LOG</strong>
+    <hr>
+    <div id="log-content">Awaiting engagement...</div>
+  </div>
+
+  <div id="feed">
+  </div>
+
+</body>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+  // 1. Global Variables
+  let visibility = true;
+  let audio = false; // Start with audio OFF
+  let seen = [];
+  let done = 0;
+
+  // Storage for all active player instances to control volume later
+  const pexelsPlayers = [];
+  const ytPlayers = [];
+
+  // 2. Toggling Logic
+  function toggleVisibility() {
+    visibility = !visibility;
+    document.getElementById("status").src = visibility ? "/img/visibilityon.svg" : "/img/visibilityoff.svg";
+    document.getElementById("data-monitor").style.visibility = visibility ? "visible" : "hidden";
+    document.getElementById("info").innerHTML = `Show data collection [${visibility ? 'ON' : 'OFF'}]`;
+  }
+
+  function toggleAudio() {
+    audio = !audio;
+
+    // Update the UI
+    document.getElementById("audiostat").src = audio ? "/img/volumeon.svg" : "/img/volumeoff.svg";
+    document.getElementById("audioinfo").innerHTML = `Toggle audio [${audio ? 'ON' : 'OFF'}]`;
+
+    // Update all Pexels videos
+    pexelsPlayers.forEach(v => {
+      v.muted = !audio;
+    });
+
+    // Update all YouTube videos
+    ytPlayers.forEach(p => {
+      if (p && p.mute) {
+        audio ? p.unMute() : p.mute();
+      }
+    });
+
+    console.log("Global Audio set to:", audio);
+  }
+
+  function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+  // 3. The Data
+  const postData = [
+    {src: "u3N-2lIE11k", category: "tech", author: "Games_for_James", caption: "looks like a pretty awesome device"},
+    {src: "jlUY9cYEoJQ", category: "gaming", author: "ThatMumboJumbo", caption: "hyale gameplay"},
+    {src: "P-4pbFcERnk", category: "science", author: "veritasium", caption: "What happens if you keep slowing down time?"},
+  ];
+
+  // 4. Build the Feed
+  function buildFeed() {
+    const feed = document.getElementById("feed");
+    while (done < 10 && seen.length < postData.length) {
+      let ranint = getRandomInt(postData.length);
+      if (!seen.includes(ranint)) {
+        seen.push(ranint);
+        done++;
+        createPost(postData[ranint], done);
+      }
+    }
+  }
+
+  function createPost(post, index) {
+    const feed = document.getElementById("feed");
+    let area = document.createElement("div");
+    area.className = "area";
+    area.style.padding = "20px";
+    area.style.borderBottom = "2px solid #DEFFDA";
+
+    let authorlabel = document.createElement("p");
+    authorlabel.innerHTML = `@${post.author}`;
+    let categorylabel = document.createElement("p");
+    categorylabel.innerHTML = post.category.toUpperCase();
+    categorylabel.style.fontSize = "12px";
+    categorylabel.style.color = "#666";
+    let captionlabel = document.createElement("p");
+    captionlabel.innerHTML = post.caption || "";
+    captionlabel.style.fontSize = "12px";
+
+    let videoEl = null;
+    let ytPlayerObj = null;
+
+    if (post.src.includes("pexels.com")) {
+      videoEl = document.createElement("video");
+      videoEl.src = post.src;
+      videoEl.muted = !audio; // Respect current audio state
+      videoEl.loop = true;
+      videoEl.style.width = "400px";
+      videoEl.style.borderRadius = "8px";
+      area.appendChild(videoEl);
+      pexelsPlayers.push(videoEl); // Store for global control
+    } else {
+      let ytDiv = document.createElement("div");
+      let uniqueID = `yt-player-${index}`;
+      ytDiv.id = uniqueID;
+      area.appendChild(ytDiv);
+
+      setTimeout(() => {
+        if (window.YT && YT.Player) {
+          ytPlayerObj = new YT.Player(uniqueID, {
+            height: '300',
+            width: '400',
+            videoId: post.src,
+            playerVars: {
+              'autoplay': 0,
+              'controls': 1,
+              'rel': 0,
+              'mute': audio ? 0 : 1, // 1 is muted, 0 is unmuted,
+              'cc_load_policy': 1
+            },
+            events: {
+              'onReady': (event) => {
+                ytPlayers.push(event.target); // Store for global control
+              }
+            }
+          });
+        }
+      }, 1000);
+    }
+
+    area.appendChild(authorlabel);
+    area.appendChild(categorylabel);
+    area.appendChild(captionlabel);
+    feed.appendChild(area);
+
+    let startTime;
+    area.onmouseenter = () => {
+      startTime = Date.now();
+      if (visibility) area.style.backgroundColor = "#ffdbdb";
+      if (videoEl) videoEl.play();
+      if (ytPlayerObj && ytPlayerObj.playVideo) ytPlayerObj.playVideo();
+    };
+
+    area.onmouseleave = () => {
+      let duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      area.style.backgroundColor = "transparent";
+      if (videoEl) videoEl.pause();
+      if (ytPlayerObj && ytPlayerObj.pauseVideo) ytPlayerObj.pauseVideo();
+
+      if (duration > 0.1) {
+        document.getElementById("log-content").innerHTML =
+          `> Observed ${duration}s on ${post.category.toUpperCase()}<br>` +
+          document.getElementById("log-content").innerHTML;
+      }
+    };
+  }
+
+  buildFeed();
+</script>
+
+</html>
