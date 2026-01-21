@@ -465,7 +465,8 @@
             },
             events: {
               'onReady': (event) => {
-                ytPlayers.push(event.target); // Store for global control
+                ytPlayers.push(event.target);
+                event.target.mute();
               }
             }
           });
