@@ -472,19 +472,30 @@
 
     area.onmouseleave = () => {
       if (startTime === undefined) return;
-      let duration = ((performance.now() - startTime) / 1000).toFixed(2);
 
-      categoryTimes[post.category] += duration;
+      let duration = (performance.now() - startTime) / 1000;
       area.style.backgroundColor = "#ffffff";
+
       if (videoEl) videoEl.pause();
       if (ytPlayerObj && ytPlayerObj.pauseVideo) ytPlayerObj.pauseVideo();
 
-      if (duration > 0.1) {
+      if (duration > 0.05) {
+        // SAFETY CHECK: If category doesn't exist yet, start at 0
+        if (!categoryTimes[post.category]) {
+          categoryTimes[post.category] = 0;
+        }
+
+        // Add the duration
+        categoryTimes[post.category] += duration;
+
         document.getElementById("log-content").innerHTML =
-          `> Observed ${duration}s on ${post.category.toUpperCase()}<br>` +
-          document.getElementById("log-content").innerHTML;
+                `> Observed ${duration.toFixed(2)}s on ${post.category.toUpperCase()}<br>` +
+                document.getElementById("log-content").innerHTML;
       }
+
+      startTime = undefined; // Reset to prevent double-counting
     };
+
   }
 
   buildFeed();
@@ -526,8 +537,8 @@
 
     if (mostWatched.time > 0.1) {
       analysisHTML += `<br><div style="background: #e1f5fe; padding: 10px; border-radius: 5px; font-size: 14px; border: 1px solid #b3e5fc;">
-                            <strong>Algorithm Insight:</strong> High engagement detected in <b>${mostWatched.cat}</b>.
-                            Your profile has been categorized for <b>${mostWatched.cat.toLowerCase()}</b> optimization.
+                            <strong>Insight:</strong> Most engagement in category <b>${mostWatched.cat}</b>.
+                            You may be most interested in <b>${mostWatched.cat}</b>, and a service may offer targeted ads and content likewise.
                          </div>`;
     } else {
       analysisHTML += `<br><p style="font-size: 14px; color: #666;">Minimal engagement detected. Profile remains generic.</p>`;
