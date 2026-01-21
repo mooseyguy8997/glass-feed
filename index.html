@@ -35,7 +35,7 @@
       align-content: center;
       margin: 5px;
       font-family: "Roboto", sans-serif;
-      background-color: #DEFFDA
+      background-color: #DEFFDA;
     }
     .topbar {
       align-items: center;
@@ -90,7 +90,8 @@
     }
 
     #feed {
-      background-color: #ffffff;
+      display: grid;
+      grid-gap: 10px;
     }
 
     #data-monitor {
@@ -105,16 +106,61 @@
       font-size: 12px;
       display: block; /* We will toggle this with your button */
     }
+
+    #timer {
+      position: fixed;
+      top: 5px;
+      left: 20px;
+      visibility: visible;
+      color: #C30000FF
+    }
+
+    .bottom-bar {
+      text-align: center;
+      margin: 10px;
+    }
+
+    #finish {
+      font-family: "Roboto Mono", sans-serif;
+      font-weight: 600;
+      font-size: 24px;
+
+      border-radius: 8px;
+      border: none;
+      background-color: #37c6aa;
+    }
+
+    #loadingscreen {
+      top: 0;
+      left: 0;
+
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      text-align: center;
+      justify-content: center;
+      background-color: white;
+
+      display: grid;
+      place-items: center; /* Centers both horizontally and vertically */
+    }
+
+    #loading {
+      height: 100px;
+      filter: invert(0.5);
+    }
   </style>
 </head>
 
 <body>
+
+
   <div class="topbar">
     <img id="title" src="img/TheGlassFeed.svg">
     <p>Toggle tracking visibility with the toggle eye to the right.</p>
-    <button onclick="toggleVisibility()"><a id="info">Show data collection [ON]</a><img id="status" src="/img/visibilityon.svg" alt="Visibility"></button>
-    <button id="audiosetting" onclick="toggleAudio()"><a id="audioinfo">Toggle audio [OFF]</a><img id="audiostat" src="/img/volumeoff.svg" alt="Visibility"></button>
-
+    <button onclick="toggleVisibility()"><a id="info">Show data collection [ON]</a><img id="status" src="img/visibilityon.svg" alt="Visibility"></button>
+    <button id="audiosetting" onclick="toggleAudio()"><a id="audioinfo">Toggle audio [OFF]</a><img id="audiostat" src="img/volumeoff.svg" alt="Visibility"></button>
+    <p id="timer">00:00.00</p>
   </div>
   <div id="data-monitor">
     <strong>LIVE ALGORITHM LOG</strong>
@@ -122,13 +168,63 @@
     <div id="log-content">Awaiting engagement...</div>
   </div>
 
+
+
   <div id="feed">
+  </div>
+
+  <div class="bottom-bar">
+    <p>Press the button below to analyze the results and see what it could be used for.</p>
+    <input type="button" id="finish" onclick="finish()" value="FINISH">
+  </div>
+
+  <div id="loadingscreen">
+    <img id="loading" src="img/gear.svg">
+    <p>Loading...</p>
   </div>
 
 </body>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
+
+
+
+
+  let startTime;
+  let elapsedTime = 0;
+  let timerInterval;
+
+  const display = document.getElementById('timer');
+
+  // Function to format time (MM:SS:ms)
+  function formatTime(time) {
+    let hundredths = Math.floor((time % 1000) / 10); // Get hundredths of a second
+    let seconds = Math.floor(time / 1000) % 60;
+    let minutes = Math.floor(time / (1000 * 60)) % 60;
+
+    // Use padStart to ensure two digits
+    minutes = minutes.toString().padStart(2, "0");
+    seconds = seconds.toString().padStart(2, "0");
+    hundredths = hundredths.toString().padStart(2, "0");
+
+    return `${minutes}:${seconds}:${hundredths}`;
+  }
+
+  // Start function
+  function start() {
+    startTime = Date.now() - elapsedTime;
+    timerInterval = setInterval(function printTime() {
+      elapsedTime = Date.now() - startTime;
+      display.textContent = formatTime(elapsedTime);
+      document.getElementById("loading").style.rotate = elapsedTime/4+"deg";
+      if (elapsedTime > 1500) {
+        document.getElementById("loadingscreen").style.visibility = "hidden";
+      }
+    }, 10); // Update every 10ms for hundredths
+  }
+  start();
+
   // 1. Global Variables
   let visibility = true;
   let audio = false; // Start with audio OFF
@@ -144,8 +240,13 @@
     visibility = !visibility;
     document.getElementById("status").src = visibility ? "img/visibilityon.svg" : "img/visibilityoff.svg";
     document.getElementById("data-monitor").style.visibility = visibility ? "visible" : "hidden";
+    document.getElementById("timer").style.visibility = visibility ? "visible" : "hidden";
+    document.getElementById("title").style.filter = visibility ? "invert(1)" : "none";
+
+    document.body.style.backgroundColor = visibility ? "#f55f55" : "#DEFFDA";
     document.getElementById("info").innerHTML = `Show data collection [${visibility ? 'ON' : 'OFF'}]`;
   }
+  toggleVisibility();
 
   function toggleAudio() {
     audio = !audio;
@@ -176,8 +277,8 @@
   // 3. The Data
   const postData = [
     {src: "u3N-2lIE11k", category: "tech", author: "Games_for_James", caption: "looks like a pretty awesome device"},
-    {src: "jlUY9cYEoJQ", category: "gaming", author: "ThatMumboJumbo", caption: "hyale gameplay"},
-    {src: "P-4pbFcERnk", category: "science", author: "veritasium", caption: "What happens if you keep slowing down time?"},
+    {src: "jlUY9cYEoJQ", category: "gaming", author: "ThatMumboJumbo", caption: "mumbo sucks at games"},
+    {src: "P-4pbFcERnk", category: "science", author: "veritasium", caption: "coke bottle"},
   ];
 
   // 4. Build the Feed
@@ -198,7 +299,9 @@
     let area = document.createElement("div");
     area.className = "area";
     area.style.padding = "20px";
-    area.style.borderBottom = "2px solid #DEFFDA";
+    area.style.borderRadius = "8px";
+    //area.style.borderBottom = "16px solid #DEFFDA";
+    area.style.backgroundColor = "#ffffff";
 
     let authorlabel = document.createElement("p");
     authorlabel.innerHTML = `@${post.author}`;
@@ -231,8 +334,8 @@
       setTimeout(() => {
         if (window.YT && YT.Player) {
           ytPlayerObj = new YT.Player(uniqueID, {
-            height: '300',
-            width: '400',
+            height: '500',
+            width: '889',
             videoId: post.src,
             playerVars: {
               'autoplay': 0,
@@ -266,7 +369,7 @@
 
     area.onmouseleave = () => {
       let duration = ((Date.now() - startTime) / 1000).toFixed(2);
-      area.style.backgroundColor = "transparent";
+      area.style.backgroundColor = "#ffffff";
       if (videoEl) videoEl.pause();
       if (ytPlayerObj && ytPlayerObj.pauseVideo) ytPlayerObj.pauseVideo();
 
