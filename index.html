@@ -7,6 +7,7 @@
   <title>Ethics Project Artifact #1</title>
   <link rel="stylesheet" href="css/style.css">
   <meta name="description" content="">
+  <title>Ethics Project EQ #1</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,7 +96,8 @@
 
     #feed {
       display: grid;
-      grid-gap: 10px;
+      grid-gap: 16px;
+      padding: 10px;
     }
 
     #data-monitor {
@@ -183,6 +185,8 @@
     }
     #popup-container {
       width: 40vw;
+      max-height: 90vh;
+      overflow-y: scroll;
       background-color: white;
       border: none;
       border-radius: 8px;
@@ -319,8 +323,18 @@
   let seen = [];
   let done = 0;
 
-  openPopup("Ethics Project Artifact #1 (Bjorn S.)", "A website that has a feed of random content in different categories, at the end displaying collected information and possible uses of it, like in targeted ads.\n\nThis shows how you ways a company could harvest your use of their app, the company needing it to stay alive and you to be able to have access. This comes at risks, like data leaks or harmful overuse/addiction.\n\nUse the eye in the top right for tracking visibility.", "Start", function() {
+  welcomeHTML = `<strong>Glass Feed</strong>`
+  welcomeHTML += `<br><br>A website that has a feed of random content in different categories, at the end displaying collected information and possible uses of it, like in targeted ads.<br>This shows how you ways a company could harvest your use of their app, the company needing it to stay alive and you to be able to have access. This comes at risks, like data leaks or harmful overuse/addiction.`
+  welcomeHTML += `<br><br><b>Use the tracking toggle (eye) in the top right for tracking visibility,</b> and hover over videos from YouTube to engage with them.`
+  welcomeHTML += `<br><br><b>Click the button below the feed to analyze the results.</b> This isn't a full on social media, so it is very basic and generic, simply to display the concept of what could be done with your data.`
+  welcomeHTML += `<br><br>Also note that videos are muted by default, which can be changed with the audio toggle in the upper right corner. <b>The videos themselves are irrelevant to the purpose of the artifact, and are only content to fill the feed.`
+  openPopup("Ethics Project Artifact #1 (Bjorn S.)", welcomeHTML, "Start", function() {
     start();
+    window.scrollTo({
+      top: 0,
+      left: 0, // optional
+      behavior: 'auto' // instant jump
+    });
   });
 
   // Storage for all active player instances to control volume later
@@ -371,7 +385,10 @@
     {src: "u3N-2lIE11k", category: "tech", author: "Games_for_James", caption: "looks like a pretty awesome device"},
     {src: "jlUY9cYEoJQ", category: "gaming", author: "ThatMumboJumbo", caption: "mumbo sucks at games"},
     {src: "P-4pbFcERnk", category: "science", author: "veritasium", caption: "coke bottle"},
-    {src: "5vUBGuRdMf0", category: "tech", author: "Gears2181", caption: "cool intake and hopper in frc robotics"}
+    {src: "5vUBGuRdMf0", category: "tech", author: "Gears2181", caption: "cool intake and hopper in frc robotics"},
+    {src: "pT4xDuy2rLg", category: "culinary arts", author: "GarbageTime420", caption: "dude serves his custom chocolate to his customer and customer didnt like it that much"},
+    {src: "qBO1TXF8jdQ", category: "gaming", author: "rekrap2", caption: "tunnel building"},
+    {src: "SC2eSujzrUY", category: "science", author: "veritasium", caption: "PFAS"}
   ];
 
   // 4. Build the Feed
@@ -396,7 +413,7 @@
     let area = document.createElement("div");
     area.className = "area";
     area.style.padding = "20px";
-    area.style.borderRadius = "8px";
+    area.style.borderRadius = "16px";
     //area.style.borderBottom = "16px solid #DEFFDA";
     area.style.backgroundColor = "#ffffff";
 
@@ -430,6 +447,7 @@
       let ytDiv = document.createElement("div");
       let uniqueID = `yt-player-${index}`;
       ytDiv.id = uniqueID;
+      ytDiv.style.borderRadius = "8px";
       area.appendChild(ytDiv);
 
       setTimeout(() => {
@@ -447,7 +465,8 @@
             },
             events: {
               'onReady': (event) => {
-                ytPlayers.push(event.target); // Store for global control
+                ytPlayers.push(event.target);
+                event.target.mute();
               }
             }
           });
