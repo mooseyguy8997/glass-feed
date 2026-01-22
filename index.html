@@ -469,6 +469,7 @@
               'onReady': (event) => {
                 ytPlayers.push(event.target);
                 event.target.mute();
+                event.target.autoplay(false);
               }
             }
           });
