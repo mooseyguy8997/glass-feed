@@ -329,8 +329,7 @@
   welcomeHTML += `<br><br><b>Use the tracking toggle (eye) in the top right for tracking visibility,</b> and hover over videos from YouTube to engage with them. The eye just reveals the sci-fi scheme going on in the background, only really barebones.`
   welcomeHTML += `<br><br><b>Click the button below the feed to analyze the results.</b> This isn't a full on social media, so it is very basic and generic, simply to display the concept of what could be done with your data.`
   welcomeHTML += `<br><br>Also note that videos are muted by default, which can be changed with the audio toggle in the upper right corner. <b>The videos themselves are irrelevant to the purpose of the artifact, and are only content to fill the feed.</b>`
-  welcomeHTML += `<br><br><strong>This offers transparency to how engagement might be tracked by a social media service. </strong>“Transparency in data collection and use is critical to building customer trust and preventing misuse of information after it is collected” (Sarah Shelley, 2024).`
-  welcomeHTML += `<br><br>If YouTube decides to play an ad on every embed, just reload the page and they shouldn't reappear.`
+  welcomeHTML += `<br><br><strong>This offers transparency to how engagement might be tracked by a social media service.</strong> In the article "Understanding the Ethics of Data Collection and Responsible Data Usage" on the University of Cumberlands website, standards for good ethics with data is described. “Transparency in data collection and use is critical to building customer trust and preventing misuse of information after it is collected” (Sarah Shelley, 2024). Are these standards respected on social media?`
   openPopup("Ethics Project Artifact #1 (Bjorn S.)", welcomeHTML, "Start", function() {
     start();
     window.scrollTo({
@@ -391,7 +390,8 @@
     {src: "5vUBGuRdMf0", category: "tech", author: "Gears2181", caption: "cool intake and hopper in frc robotics"},
     {src: "pT4xDuy2rLg", category: "culinary arts", author: "GarbageTime420", caption: "dude serves his custom chocolate to his customer and customer didnt like it that much"},
     {src: "qBO1TXF8jdQ", category: "gaming", author: "rekrap2", caption: "tunnel building"},
-    {src: "SC2eSujzrUY", category: "science", author: "veritasium", caption: "PFAS"}
+    {src: "SC2eSujzrUY", category: "science", author: "veritasium", caption: "PFAS"},
+    {src: "5Vfni0QBn6Y", category: "recreation", author: "DanNoakes", caption: "dude doing alpine things"}
   ];
 
   // 4. Build the Feed
@@ -567,7 +567,7 @@
       analysisHTML += `<br><p style="font-size: 14px; color: #666;">No engagement detected. Did you avoid hovering over anything?</p>`;
     }
 
-    analysisHTML += `<br>This insight's <b>purpose</b> is to describe one way a social media service might use your data, but with harmful outcomes, "This data is often used to keep users on platforms for as long as possible, sell behavioral advertising, and train AI models, which frequently produce distortive and discriminatory outcomes" (EPIC, 2025). This advertising is needed for the platform to exist, so what else can be done? Even without, users will want content related to their interests.`
+    analysisHTML += `<br>This insight's <b>purpose</b> is to describe one way a social media service might use your data, but with harmful outcomes. This is described in the article "Social Media Privacy" by the Electronic Privacy Information Center. For example, "This data is often used to keep users on platforms for as long as possible, sell behavioral advertising, and train AI models, which frequently produce distortive and discriminatory outcomes" (EPIC, 2025). This advertising is needed for the platform to exist, so what else can be done? Even without, users will want content related to their interests.`
     analysisHTML += `<br><br><div style="background: #fff9b1; padding: 10px; border-radius: 5px; font-size: 14px; border: 1px solid #f6ea62;">
                             <strong>Note:</strong> I'm quite sure that feed wasn't engaging. It was simply a demonstration to show the implications of your data being collected. Substituting chocolate for oil in an engine isn't a culinary art, unless you think really hard about it.
                          </div>`
